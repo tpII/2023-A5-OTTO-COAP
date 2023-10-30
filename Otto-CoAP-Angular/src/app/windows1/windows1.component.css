@@ -1,0 +1,35 @@
+*{
+  @media screen{
+  min-width: auto;
+  max-width: auto;
+  }
+}
+.column-container{
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.column-button1{
+  margin-bottom: 10px 50px; /* Espacio entre los botones  */
+  padding: 10px 20px; /* Relleno del botón  */
+  justify-content: center;
+  align-items: center;
+
+
+}
+
+.column-button2 {
+  margin-bottom: 10px 50px; /* Espacio entre los botones  */
+  padding: 10px 20px; /* Relleno del botón  */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+}
+
+.text{
+  margin-top: 50px;
+
+}
+

@@ -1,0 +1,19 @@
+.contenedor{
+  display: flex;
+  justify-content: center;
+}
+
+.columna{
+  padding:auto;
+  margin: auto auto;
+}
+
+.boton{
+  position: absolute;
+  bottom: 10px; /* Margen inferior (ajusta según tus necesidades) */
+  left: 50%; /* Centra el botón horizontalmente en relación con el contenedor */
+  transform: translateX(-50%); /* Ajusta la posición del botón al centro horizontal */
+  padding: 10px 20px;
+  border: none;
+  cursor: pointer;
+}
