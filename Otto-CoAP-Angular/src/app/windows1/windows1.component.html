@@ -34,3 +34,12 @@
 <!--Aviso de instruccion seleccionada-->
 
 
+<!--Logica para la seleccion de protocolo-->
+<div class="protocolo-selector">
+  <button (click)="toggleProtocol()">Protocolo</button>
+</div>
+
+<div class="protocolo-info">
+  <div class="protocolo-seleccionado">Protocolo seleccionado: {{ protocoloSeleccionado }}</div>
+  <div class="protocolo-por-defecto">Protocolo por defecto: CoAP</div>
+</div>

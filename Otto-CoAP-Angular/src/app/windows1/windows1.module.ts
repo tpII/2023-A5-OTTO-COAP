@@ -1,19 +1,10 @@
-import { NgModule } from '@angular/core';
-import {
-  MatButtonModule,
-  MatMenuModule,
-  MatSelectModule,
-} from '@angular/material';
+import { CUSTOM_ELEMENTS_SCHEMA, NgModule } from '@angular/core';
+import { MatMenuModule } from '@angular/material/menu';
 import { MatFormFieldModule } from '@angular/material/form-field';
 
 @NgModule({
   declarations: [],
-  imports: [
-    MatButtonModule,
-    MatMenuModule,
-    MatSelectModule,
-    MatFormFieldModule,
-    MatMenuModule,
-  ],
+  imports: [MatMenuModule],
+  schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })
 export class Windows1Module {}

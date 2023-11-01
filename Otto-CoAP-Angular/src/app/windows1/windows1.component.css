@@ -33,3 +33,28 @@
 
 }
 
+.protocolo-selector {
+  position: fixed;
+  bottom: 20px; /* Puedes ajustar la distancia desde la parte inferior */
+  right: 20px; /* Puedes ajustar la distancia desde la derecha */
+}
+
+.protocolo-info {
+  position: fixed;
+  bottom: 20px; /* Puedes ajustar la distancia desde la parte inferior */
+  left: 20px; /* Puedes ajustar la distancia desde la izquierda */
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+/* Estilos para el texto "Protocolo seleccionado" */
+.protocolo-seleccionado {
+  font-size: 14px;
+  margin-bottom: 5px;
+}
+
+/* Estilos para el texto "Protocolo por defecto" */
+.protocolo-por-defecto {
+  font-size: 14px;
+}
