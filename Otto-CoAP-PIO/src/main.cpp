@@ -86,16 +86,23 @@ void callback(char* topic, byte* payload, unsigned int length){
     Serial.print((char)payload[i]);
   }
   Serial.println();
-
-  if (length >= 2) { //Transformo el mensaje a int
-    payload[length] = '\0'; // Make payload a string by NULL terminating it.
-    intValue = atoi((char *)payload);
-    Serial.print(intValue);
+  if(topic=="movimiento"){
+    if (length >= 2) { //Transformo el mensaje a int
+      payload[length] = '\0'; // Make payload a string by NULL terminating it.
+      intValue = atoi((char *)payload);
+      Serial.print(intValue);
+    }
+    // Obtengo la funcion del movimiento llamada por el mensaje
+    f = otto.Otto::doActionsArray [intValue];
+    // Invoco el movimiento
+    (otto.*f) ();
+  }else{
+    { 
+      payload[length] = '\0'; // Make payload a string by NULL terminating it.
+      mqttValid = ((char *)payload =="true");
+    }
   }
-  // Obtengo la funcion del movimiento llamada por el mensaje
-  f = otto.Otto::doActionsArray [intValue];
-  // Invoco el movimiento
-  (otto.*f) ();
+  mqttClient.publish("mensaje","Recibido");
 }
 
 //Funcion que realiza el manejo de mensajes CoAP para el movimiento
@@ -116,6 +123,7 @@ void callback_movimiento(CoapPacket &packet, IPAddress ip, int port) {
     f = otto.Otto::doActionsArray[intValue];
     //Invoco funcion de movimiento 
     (otto.*f)(); 
+    coap.sendResponse(ip, port, packet.messageid,"Recibido");
   }
 }
 void callback_protocolo(CoapPacket &packet, IPAddress ip, int port) {
@@ -127,14 +135,13 @@ void callback_protocolo(CoapPacket &packet, IPAddress ip, int port) {
     Serial.print((char)packet.payload);
     memcpy(dato, packet.payload, packet.payloadlen);
     dato[packet.payloadlen] = NULL;
-    
-    String message(dato);
 
-    if (message.equals("0"))
-      mqttValid = false;
-    else if (message.equals("1"))
-      mqttValid = true;
+      mqttValid = ((char *)dato =="true");
   }
+  /*if (mqttValid) {
+    coap.sendResponse(ip, port, packet.messageid, "Se a decido por MQTT");
+  }*/
+  coap.sendResponse(ip, port, packet.messageid,"Recibido");
 }
 
 
