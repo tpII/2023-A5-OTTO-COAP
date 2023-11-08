@@ -24,11 +24,6 @@ export class MqttServiceClient {
       }
     });
   }
-  //devuelve la metrica obtenida
-  getMetricMqtt() {
-    return this.metricTimeElapsed;
-  }
-
   // publica en el topico movimiento el valor del indice del movimiento
   public publishToMovimientos(value: number): void {
     this.metricStartTime = Date.now();
@@ -37,5 +32,10 @@ export class MqttServiceClient {
       qos: 1,
       retain: true,
     });
+  }
+
+  //devuelve la metrica obtenida
+  getMetricaMqtt() {
+    return this.metricTimeElapsed;
   }
 }
