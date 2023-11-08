@@ -1,6 +1,5 @@
 import { Injectable } from '@angular/core';
 import { MqttService, IMqttMessage } from 'ngx-mqtt';
-import { mqttConfig } from './mqtt.config';
 
 @Injectable({
   providedIn: 'root',
@@ -11,7 +10,7 @@ export class MqttServiceClient {
   private metricTimeElapsed: number = 0;
 
   constructor(private mqttService: MqttService) {
-    this.mqttService.connect(mqttConfig);
+    this.mqttService.connect();
 
     // Suscripción al tópico "mensaje" para recibir confirmaciones
     this.mqttService.observe('mensaje').subscribe((message: IMqttMessage) => {
@@ -33,9 +32,17 @@ export class MqttServiceClient {
       retain: true,
     });
   }
-
-  //devuelve la metrica obtenida
-  getMetricaMqtt() {
+  //publica en el topico protocolo que se modifico de protocolo
+  public publishToProtocolo(): void {
+    this.metricStartTime = Date.now();
+    const message = 'true';
+    this.mqttService.unsafePublish('protocolo', message, {
+      qos: 1,
+      retain: true,
+    });
+  }
+  getMetricamqtt() {
     return this.metricTimeElapsed;
   }
 }
+//export { MqttService };

@@ -5,32 +5,28 @@ import { HttpClient } from '@angular/common/http';
   providedIn: 'root',
 })
 export class CoapServiceClient {
-  constructor(private http: HttpClient) {}
-  private tiempoTranscurrido: number = 0;
-  public sendCoapRequest(
-    host: string,
-    port: number,
-    path: string,
-    payload: string
-  ): Promise<number> {
-    return new Promise<number>((resolve, reject) => {
-      const startTime = performance.now(); // Registra el tiempo de inicio
+  private coapServerUrl = 'http://localhost:5683';
 
-      // Realiza la solicitud HTTP POST con el payload
-      this.http.post(`coap://${host}:${port}${path}`, payload).subscribe(
-        () => {
-          // Analiza la respuesta (en este ejemplo, no se requiere analizar una respuesta específica)
-          const endTime = performance.now(); // Registra el tiempo de finalización
-          this.tiempoTranscurrido = endTime - startTime; // Calcula la diferencia de tiempo
-          resolve(this.tiempoTranscurrido);
-        },
-        (error) => {
-          reject(`Error en la solicitud CoAP: ${error}`);
-        }
-      );
-    });
+  constructor(private http: HttpClient) {}
+  private elapsedTime: number = -1;
+  //informa al node sobre el cambio de protocolo
+  sendCoapProtocol() {
+    this.http.post(`${this.coapServerUrl}`, true);
   }
-  getMetricaCoap() {
-    return this.tiempoTranscurrido;
+  //metodo que calcula el tiempo de respuesta con el node
+  sendCoapRequestAndCalculateTime(message: string) {
+    const startTime = Date.now(); // Registra el tiempo de inicio
+    this.http
+      .post(`${this.coapServerUrl}`, message)
+      .subscribe((response: any) => {
+        // Procesa la respuesta del servidor CoAP
+        if (response && response === 'OK') {
+          const endTime = Date.now(); // Registra el tiempo de finalización
+          this.elapsedTime = endTime - startTime; // Calcula el tiempo transcurrido
+        }
+      });
+  }
+  getMetricacoap() {
+    return this.elapsedTime;
   }
 }

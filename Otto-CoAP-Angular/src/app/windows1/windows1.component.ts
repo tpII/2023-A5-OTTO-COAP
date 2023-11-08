@@ -1,8 +1,8 @@
 import { Component } from '@angular/core';
 import { MatMenuModule } from '@angular/material/menu';
 import { Router } from '@angular/router';
-import { MqttServiceClient } from '../helper/mqtt.service';
 import { CoapServiceClient } from '../helper/coap.service';
+import { MqttServiceClient } from '../helper/mqtt/mqtt.service';
 
 @Component({
   selector: 'app-windows1',
@@ -10,6 +10,7 @@ import { CoapServiceClient } from '../helper/coap.service';
   styleUrls: ['./windows1.component.css'],
   standalone: true,
   imports: [MatMenuModule],
+  providers: [MqttServiceClient],
 })
 export class Windows1Component {
   constructor(
@@ -55,9 +56,11 @@ export class Windows1Component {
   protocoloSeleccionado: string = 'CoAP';
   toggleProtocol() {
     if (this.protocoloSeleccionado === 'CoAP') {
+      this.coapService.sendCoapProtocol();
       this.protocoloSeleccionado = 'MQTT';
       this.isCoap = false;
     } else {
+      this.mqttService.publishToProtocolo();
       this.protocoloSeleccionado = 'CoAP';
       this.isCoap = true;
     }
@@ -65,12 +68,7 @@ export class Windows1Component {
 
   comunicacion() {
     if (this.isCoap)
-      this.coapService.sendCoapRequest(
-        'host',
-        5683,
-        'ruta',
-        this.indice.toString()
-      );
+      this.coapService.sendCoapRequestAndCalculateTime(this.indice.toString());
     else this.mqttService.publishToMovimientos(this.indice);
   }
 
