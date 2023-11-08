@@ -41,6 +41,7 @@ export class MqttServiceClient {
       retain: true,
     });
   }
+  //se obtiene el valor de la metrica
   getMetricamqtt() {
     return this.metricTimeElapsed;
   }

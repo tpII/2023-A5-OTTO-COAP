@@ -65,7 +65,7 @@ export class Windows1Component {
       this.isCoap = true;
     }
   }
-
+  //ejecuta el inicio de la comunicacion con el node, dependiendo de que servicio se este utilizando
   comunicacion() {
     if (this.isCoap)
       this.coapService.sendCoapRequestAndCalculateTime(this.indice.toString());

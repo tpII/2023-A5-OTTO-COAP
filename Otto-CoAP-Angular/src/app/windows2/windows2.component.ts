@@ -7,11 +7,10 @@ import { CoapServiceClient } from '../helper/coap.service';
   selector: 'app-windows2',
   templateUrl: './windows2.component.html',
   styleUrls: ['./windows2.component.css'],
-  providers: [MqttServiceClient],
 })
-export class Windows2Component implements OnInit {
-  Veccoap: number[] = [];
-  Vecmqtt: number[] = [];
+export class Windows2Component {
+  private Veccoap: number[] = [];
+  private Vecmqtt: number[] = [];
 
   constructor(
     private router: Router,
@@ -19,8 +18,7 @@ export class Windows2Component implements OnInit {
     private coapService: CoapServiceClient
   ) {}
 
-  ngOnInit(): void {}
-
+  //se encarga de actualizar los valores de los arreglos para luego visualizarlos en la pantalla
   cargaVec() {
     this.Veccoap.push(this.coapService.getMetricacoap());
     this.Vecmqtt.push(this.mqttService.getMetricamqtt());

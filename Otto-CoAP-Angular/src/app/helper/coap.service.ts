@@ -26,6 +26,7 @@ export class CoapServiceClient {
         }
       });
   }
+  //devolucion metrica obtenida
   getMetricacoap() {
     return this.elapsedTime;
   }
