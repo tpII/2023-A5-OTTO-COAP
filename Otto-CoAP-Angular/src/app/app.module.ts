@@ -14,8 +14,9 @@ import { HttpClientModule } from '@angular/common/http';
     BrowserAnimationsModule,
     MatMenuModule,
     MqttModule.forRoot({
-      hostname: 'localhost',
+      hostname: '192.168.0.160', //aqui se debe colocar la direccion ip en la cual nos encontramos conectado
       port: 1883, // Puerto MQTT predeterminado
+      path: '/mqtt',
     }),
     HttpClientModule,
   ],
