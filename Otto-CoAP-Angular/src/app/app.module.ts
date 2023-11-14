@@ -6,6 +6,7 @@ import { AppComponent } from './app.component';
 import { MatMenuModule } from '@angular/material/menu';
 import { MqttModule } from 'ngx-mqtt';
 import { HttpClientModule } from '@angular/common/http';
+import { ipname } from 'src/ENV';
 @NgModule({
   declarations: [AppComponent],
   imports: [
@@ -14,7 +15,7 @@ import { HttpClientModule } from '@angular/common/http';
     BrowserAnimationsModule,
     MatMenuModule,
     MqttModule.forRoot({
-      hostname: '192.168.0.160', //aqui se debe colocar la direccion ip en la cual nos encontramos conectado
+      hostname: ipname, //aqui se debe colocar la direccion ip en la cual nos encontramos conectado
       port: 1883, // Puerto MQTT predeterminado
       path: '/mqtt',
     }),

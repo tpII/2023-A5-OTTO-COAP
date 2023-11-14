@@ -1,11 +1,12 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
+import { ipname } from 'src/ENV';
 
 @Injectable({
   providedIn: 'root',
 })
 export class CoapServiceClient {
-  private coapServerUrl = 'http://192.168.0.160:5683/message'; //Colocar la dirección ip de la máquina
+  private coapServerUrl = `http://${ipname}:5683/message`; //Colocar la dirección ip de la máquina
   //dependiendo de la red a la que se conecte
 
   constructor(private http: HttpClient) {}
