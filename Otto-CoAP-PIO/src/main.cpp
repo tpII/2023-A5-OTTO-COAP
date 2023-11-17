@@ -18,8 +18,8 @@ Otto otto;
 Otto::function f;
 int intValue = 0;
 
-const char* ssid = "";             // Parametros del AP
-const char* password = "";     // 
+const char* ssid = "";  // Parametros del AP
+const char* password = ""; // 
 const char* mqtt_server = ""; //Parametros del broker MQTT
 const uint16_t mqtt_server_port = 1883;    //
 const char* mqttUser = "Otto";             //
@@ -86,7 +86,6 @@ void callback(char* topic, byte* payload, unsigned int length){
     Serial.print((char)payload[i]);
   }
   Serial.println();
-  if(topic=="movimiento"){
     if (length >= 2) { //Transformo el mensaje a int
       payload[length] = '\0'; // Make payload a string by NULL terminating it.
       intValue = atoi((char *)payload);
@@ -96,54 +95,24 @@ void callback(char* topic, byte* payload, unsigned int length){
     f = otto.Otto::doActionsArray [intValue];
     // Invoco el movimiento
     (otto.*f) ();
-  }else{
-    { 
-      payload[length] = '\0'; // Make payload a string by NULL terminating it.
-      mqttValid = ((char *)payload =="true");
-    }
-  }
   mqttClient.publish("mensaje","Recibido");
 }
 
-//Funcion que realiza el manejo de mensajes CoAP para el movimiento
-void callback_movimiento(CoapPacket &packet, IPAddress ip, int port) {
+//Funcio que maneja los response devido los request generados del cliente 
+void callback_reponse (CoapPacket &packet, IPAddress ip, int port){
+  Serial.println("[Coap respuesta conseguida: ]");
   char dato[packet.payloadlen + 1];
-
- if (packet.code == COAP_POST) {
-    // Maneja solicitudes POST
-    Serial.print("' with payload: ");
-    Serial.print((char)packet.payload);
-
-    if (packet.payloadlen>=2){
-      memcpy(dato, packet.payload, packet.payloadlen);
-      dato[packet.payloadlen] = NULL;
-      intValue = atoi((char*)dato);//Convierte el dato recivido en un int
-    }
+  memcpy(dato, packet.payload, packet.payloadlen);
+  dato[packet.payloadlen] = NULL;
+  if (packet.payloadlen <=2){
+    intValue = atoi((char*)dato);//Convierte el dato recivido en un int
     //Obtengo la funcion del movimiento recivida desde por el movimiento
     f = otto.Otto::doActionsArray[intValue];
     //Invoco funcion de movimiento 
     (otto.*f)(); 
-    coap.sendResponse(ip, port, packet.messageid,"Recibido");
+  Serial.println(dato);
   }
 }
-void callback_protocolo(CoapPacket &packet, IPAddress ip, int port) {
-  char dato[packet.payloadlen + 1];
-
- if (packet.code == COAP_POST) {
-    // Maneja solicitud para el cambion de protocolo de comunicacion
-    Serial.print("' with payload: ");
-    Serial.print((char)packet.payload);
-    memcpy(dato, packet.payload, packet.payloadlen);
-    dato[packet.payloadlen] = NULL;
-
-      mqttValid = ((char *)dato =="true");
-  }
-  /*if (mqttValid) {
-    coap.sendResponse(ip, port, packet.messageid, "Se a decido por MQTT");
-  }*/
-  coap.sendResponse(ip, port, packet.messageid,"Recibido");
-}
-
 
 void setup() {
 
@@ -155,10 +124,7 @@ void setup() {
     delay(500);
     setup_Wifi();
 
-    //Agrega los punto de acceso para para la cominicacion con CoAP
-    coap.server(callback_movimiento,"movimiento");
-    coap.server(callback_protocolo,"protocolo");
-
+    coap.response(callback_reponse);
     //Se realiza la configuracion del cliente mqtt para permitir la comunicacion con el broker
     mqttClient.setServer(mqtt_server,mqtt_server_port);
     mqttClient.setCallback(callback);
@@ -168,14 +134,12 @@ void setup() {
 }
 
 void loop() {
-  if(mqttValid==false){
+    coap.get(IPAddress(104, 196, 15, 150), 5683,"movimiento");
     coap.loop();
-  }else{ 
     if(!mqttClient.connected()){
       reconnect();
     }
     mqttClient.loop(); 
-  }
   //Si se selecciono un movimiento que utiliza el ultrasonido 
   // se queda repitiendo ese movimiento haste que se seleccione otro
   if(intValue >= 20){
