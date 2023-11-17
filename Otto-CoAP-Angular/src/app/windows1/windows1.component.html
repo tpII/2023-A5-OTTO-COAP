@@ -1,4 +1,3 @@
-<!--boton de seleccion de animaciones de Otto-->
 <div class="column-container">
 <button class='column-button1' mat-button [matMenuTriggerFor]="optionsMenu">Lista de Instrucciones</button>
 <mat-menu #optionsMenu="matMenu" yPosition="below">
@@ -31,6 +30,11 @@
   <button class='column-button2'(click)="goToWindows2()">Ver Metricas</button>
 
 </div>
+<!--Boton para iniciar la comunicacion con los server-->
+<div class="boton">
+  <button (click)="comunicacion()">Iniciar Accion</button>
+</div>
+
 
 <!--Aviso de instruccion seleccionada-->
 <p>Instruccion Seleccionada: {{ options[indice] }}</p>
