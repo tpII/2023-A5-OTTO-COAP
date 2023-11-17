@@ -1,6 +1,5 @@
 import { Injectable, OnInit } from '@angular/core';
 import { MqttService, IMqttMessage } from 'ngx-mqtt';
-
 @Injectable({
   providedIn: 'root',
 })
@@ -30,22 +29,13 @@ export class MqttServiceClient {
   // publica en el topico movimiento el valor del indice del movimiento
   public publishToMovimientos(value: number): void {
     this.metricStartTime = Date.now();
-    const message = value.toString();
-    this.mqttService.publish('movimientos', message, {
+    const message =
+      'Se publica el movimiento con el indice: ' + value.toString();
+    this.mqttService.unsafePublish('movimientos', message, {
       qos: 1,
       retain: true,
     });
     console.log('publica en el topico movimientos de forma correcta');
-  }
-  //publica en el topico protocolo que se modifico de protocolo
-  public publishToProtocolo(): void {
-    this.metricStartTime = Date.now();
-    const message = 'true';
-    this.mqttService.publish('protocolo', message, {
-      qos: 1,
-      retain: true,
-    });
-    console.log('publica en el topico PROTOCOLO de forma correcta');
   }
   //se obtiene el valor de la metrica
   getMetricamqtt() {
