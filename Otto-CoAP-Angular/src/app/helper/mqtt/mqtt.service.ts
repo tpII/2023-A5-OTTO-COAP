@@ -11,21 +11,7 @@ export class MqttServiceClient {
   constructor(private mqttService: MqttService) {
     this.mqttService.connect();
   }
-  OnInit() {
-    // Suscripción al tópico "mensaje" para recibir confirmaciones
-
-    this.mqttService
-      .observe('movimientos')
-      .subscribe((message: IMqttMessage) => {
-        const receivedMessage = message.payload.toString();
-
-        if (receivedMessage === this.confirmationMessage) {
-          // Se recibió la confirmación "ok"
-          const metricEndTime = Date.now();
-          this.metricTimeElapsed = metricEndTime - this.metricStartTime;
-        }
-      });
-  }
+  OnInit() {}
   // publica en el topico movimiento el valor del indice del movimiento
   public publishToMovimientos(value: number): void {
     this.metricStartTime = Date.now();

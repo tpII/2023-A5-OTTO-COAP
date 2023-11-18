@@ -10,7 +10,6 @@ import { MqttServiceClient } from '../helper/mqtt/mqtt.service';
   styleUrls: ['./windows1.component.css'],
   standalone: true,
   imports: [MatMenuModule],
-  providers: [MqttServiceClient],
 })
 export class Windows1Component {
   constructor(
@@ -18,6 +17,7 @@ export class Windows1Component {
     private mqttServices: MqttServiceClient,
     private coapService: CoapService
   ) {}
+
   options: string[] = [
     'home',
     'walkForward',
