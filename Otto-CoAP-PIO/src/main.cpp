@@ -19,15 +19,14 @@ Otto otto;
 Otto::function f;
 int intValue = 0;
 
-const char* ssid = "Fibertel WiFi595 2.4GHz";  // Parametros del AP
-const char* password = "0141161689"; // 
-const char* mqtt_server = "192.168.0.16"; //Parametros del broker MQTT
+const char* ssid = "";  // Parametros del AP
+const char* password = ""; // 
+const char* mqtt_server = ""; //Parametros del broker MQTT
 const uint16_t mqtt_server_port = 1883;    //
 const char* mqttUser = "Otto";             //
 const char* mqttPassword = "DefaultOtto";  //
 const char* mqttTopicIn = "otto";          //
 const char* mqttTopicOut = "otto-out";     //
-
 
 WiFiClient wifiClient;
 PubSubClient mqttClient(wifiClient);
@@ -35,9 +34,9 @@ PubSubClient mqttClient(wifiClient);
 WiFiUDP udp;
 
 
-Thing::CoAP::Client coapClient;
-Thing::CoAP::ESP::UDPPacketProvider udpProvider;
-bool respuestaRecibida = false;
+
+
+bool mqttValid = false;
 
 //Funcion de seteado de wifi
 //se realiza una sola vez
@@ -47,92 +46,102 @@ void setup_Wifi(){
   Serial.println(ssid);
 
   WiFi.begin(ssid, password);
-  
-  while (WiFi.status() != WL_CONNECTED) {
+
+  while (WiFi.status() != WL_CONNECTED)
+  {
     delay(500);
     Serial.println("Conectando ...");
   }
   Serial.println("Conectado a WiFi");
 }
 
-//Funcion reconnect llamada
-//para reconectar con el broker
-void reconnect(){
-  while (!mqttClient.connected()) {
+// Funcion reconnect llamada
+// para reconectar con el broker
+void reconnect()
+{
+  while (!mqttClient.connected())
+  {
     Serial.println("Intentando reconectar al servidor MQTT...");
-    String mqttClientId ="A"; 
+    String mqttClientId = "A";
     // Intenta conectar al broker MQTT
-    if (mqttClient.connect(mqttClientId.c_str(),mqttUser,mqttPassword)) {
+    if (mqttClient.connect(mqttClientId.c_str(), mqttUser, mqttPassword))
+    {
       Serial.println("Conexión exitosa al servidor MQTT");
 
       // Una vez conectado, puedes suscribirte a los tópicos necesarios
       mqttClient.subscribe(mqttTopicIn);
-    } else {
+    }
+    else
+    {
       Serial.print("Fallo en la conexión, estado=");
       Serial.print(mqttClient.state());
       Serial.println(" Intentando de nuevo en 5 segundos...");
-      
+
       // Espera antes de intentar la reconexión
       delay(5000);
     }
-  } 
+  }
 }
 
-//Funcion callback invocada cada vez
-//que se recive un mensaje mqtt del broker
-void callback(char* topic, byte* payload, unsigned int length){
+// Funcion callback invocada cada vez
+// que se recive un mensaje mqtt del broker
+void callback(char *topic, byte *payload, unsigned int length)
+{
   Serial.print("Message arrived on topic: '");
   Serial.print(topic);
   Serial.print("' with payload: ");
-  for (unsigned int i = 0; i < length; i++) {
+  for (unsigned int i = 0; i < length; i++)
+  {
     Serial.print((char)payload[i]);
   }
   Serial.println();
-    if (length >= 2) { //Transformo el mensaje a int
-      payload[length] = '\0'; // Make payload a string by NULL terminating it.
-      intValue = atoi((char *)payload);
-      Serial.print(intValue);
-    }
-    // Obtengo la funcion del movimiento llamada por el mensaje
-    f = otto.Otto::doActionsArray [intValue];
-    // Invoco el movimiento
-    (otto.*f) ();
-  mqttClient.publish("mensaje","Recibido");
+  if (length <= 2)
+  {                         // Transformo el mensaje a int
+    payload[length] = '\0'; // Make payload a string by NULL terminating it.
+    intValue = atoi((char *)payload);
+    Serial.print(intValue);
+  }
+  // Obtengo la funcion del movimiento llamada por el mensaje
+  f = otto.Otto::doActionsArray[intValue];
+  // Invoco el movimiento
+  (otto.*f)();
+  mqttClient.publish("mensaje", "Recibido");
 }
 
-void sendMessage(){
-  //Make a post
-  coapClient.Get("movimiento", "", [](Thing::CoAP::Response response){
-      std::vector<uint8_t> payload = response.GetPayload();
-      std::string received(payload.begin(), payload.end());
-      Serial.println("Server sent the following message:");
-      Serial.println(received.c_str());
-      if(received.length()<=2){
-        intValue = stoi(received);
-      }
-      f = otto.Otto::doActionsArray[intValue];
-      (otto.*f)();
-  });
+//Funcio que maneja los response devido los request generados del cliente 
+void callback_reponse (CoapPacket &packet, IPAddress ip, int port){
+  Serial.println("[Coap respuesta conseguida: ]");
+  char dato[packet.payloadlen + 1];
+  memcpy(dato, packet.payload, packet.payloadlen);
+  dato[packet.payloadlen] = NULL;
+  if (packet.payloadlen <=2){
+    intValue = atoi((char*)dato);//Convierte el dato recivido en un int
+    //Obtengo la funcion del movimiento recivida desde por el movimiento
+    f = otto.Otto::doActionsArray[intValue];
+    //Invoco funcion de movimiento 
+    (otto.*f)(); 
+  Serial.println(dato);
+  }
 }
 
-void setup() {
+void setup()
+{
 
-    Serial.begin(9600);
+  Serial.begin(9600);
 
-    otto.init(PIERNA_I, PIERNA_D, PIE_D, PIE_I,TRIGER, ECHO);
-    otto.home();
+  otto.init(PIERNA_I, PIERNA_D, PIE_D, PIE_I, TRIGER, ECHO);
+  otto.home();
 
     delay(500);
     setup_Wifi();
 
-    
+    coap.response(callback_reponse);
     //Se realiza la configuracion del cliente mqtt para permitir la comunicacion con el broker
     mqttClient.setServer(mqtt_server,mqtt_server_port);
     mqttClient.setCallback(callback);
-    //Configuracion del cliente CoAP y coneccion al servidor 
-    coapClient.SetPacketProvider(udpProvider);
-    IPAddress ip(192, 168, 0, 245);
-    coapClient.Start(ip, 5683);
+
+    coap.start();
+
 }
 
 void loop() {
@@ -149,4 +158,32 @@ void loop() {
     (otto.*f)();
   }
   delay(5000);
+=======
+  delay(500);
+  setup_Wifi();
+
+  coap.response(callback_reponse);
+  // Se realiza la configuracion del cliente mqtt para permitir la comunicacion con el broker
+  mqttClient.setServer(mqtt_server, mqtt_server_port);
+  mqttClient.setCallback(callback);
+
+  coap.start();
+}
+
+void loop()
+{
+  coap.get(IPAddress(104, 196, 15, 150), 5683, "movimiento");
+  coap.loop();
+  if (!mqttClient.connected())
+  {
+    reconnect();
+  }
+  mqttClient.loop();
+  // Si se selecciono un movimiento que utiliza el ultrasonido
+  //  se queda repitiendo ese movimiento haste que se seleccione otro
+  if (intValue >= 20)
+  {
+    (otto.*f)();
+  }
+>>>>>>> 67abc9b1f16f0eadc563bc625900553c1eed03af
 }

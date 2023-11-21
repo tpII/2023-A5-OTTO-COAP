@@ -1,7 +1,7 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { MatMenuModule } from '@angular/material/menu';
 import { Router } from '@angular/router';
-import { CoapServiceClient } from '../helper/coap.service';
+import { CoapService } from '../helper/coap.service';
 import { MqttServiceClient } from '../helper/mqtt/mqtt.service';
 
 @Component({
@@ -10,14 +10,14 @@ import { MqttServiceClient } from '../helper/mqtt/mqtt.service';
   styleUrls: ['./windows1.component.css'],
   standalone: true,
   imports: [MatMenuModule],
-  providers: [MqttServiceClient],
 })
 export class Windows1Component {
   constructor(
     private router: Router,
-    private mqttService: MqttServiceClient,
-    private coapService: CoapServiceClient
+    private mqttServices: MqttServiceClient,
+    private coapService: CoapService
   ) {}
+
   options: string[] = [
     'home',
     'walkForward',
@@ -45,34 +45,33 @@ export class Windows1Component {
   ];
   selectedOption: string = '';
   indice: number = -1;
-  private isCoap = true;
+  protocoloSeleccionado: string = 'CoAP';
 
+  OnInit() {
+    if (this.protocoloSeleccionado === 'CoAP') {
+      this.coapService.sendCoapRequestAndCalculateTime(this.indice.toString());
+    } else {
+      this.mqttServices.publishToMovimientos(this.indice);
+    }
+  }
+  //Permite saber en todo momento cual es el protocolo de mensajeria que se desea utilizar, permitiendo el cambio
+
+  toggleProtocol() {
+    if (this.protocoloSeleccionado === 'CoAP') {
+      this.protocoloSeleccionado = 'MQTT';
+      this.coapService.sendCoapRequestAndCalculateTime(this.indice.toString());
+    } else {
+      this.protocoloSeleccionado = 'CoAP';
+      this.mqttServices.publishToMovimientos(this.indice);
+    }
+  }
+
+  //Redireccion hacia la segunda ventana
+  goToWindows2() {
+    this.router.navigate(['/windows2']);
+  }
   //Permite saber la instruccion elegida por el usuario, para luego enviarla al NodeMCU
   saveValue(valor: number) {
     this.indice = valor;
-  }
-
-  //Permite saber en todo momento cual es el protocolo de mensajeria que se desea utilizar, permitiendo el cambio
-  protocoloSeleccionado: string = 'CoAP';
-  toggleProtocol() {
-    if (this.protocoloSeleccionado === 'CoAP') {
-      this.coapService.sendCoapProtocol();
-      this.protocoloSeleccionado = 'MQTT';
-      this.isCoap = false;
-    } else {
-      this.mqttService.publishToProtocolo();
-      this.protocoloSeleccionado = 'CoAP';
-      this.isCoap = true;
-    }
-  }
-  //ejecuta el inicio de la comunicacion con el node, dependiendo de que servicio se este utilizando
-  comunicacion() {
-    if (this.isCoap)
-      this.coapService.sendCoapRequestAndCalculateTime(this.indice.toString());
-    else this.mqttService.publishToMovimientos(this.indice);
-  }
-
-  goToWindows2() {
-    this.router.navigate(['/windows2']);
   }
 }

@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { MqttServiceClient } from '../helper/mqtt/mqtt.service';
-import { CoapServiceClient } from '../helper/coap.service';
+import { CoapService } from '../helper/coap.service';
 
 @Component({
   selector: 'app-windows2',
@@ -15,7 +15,7 @@ export class Windows2Component {
   constructor(
     private router: Router,
     private mqttService: MqttServiceClient,
-    private coapService: CoapServiceClient
+    private coapService: CoapService
   ) {}
 
   //se encarga de actualizar los valores de los arreglos para luego visualizarlos en la pantalla
