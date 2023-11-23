@@ -38,6 +38,7 @@ WiFiUDP udp;
 Thing::CoAP::Client coapClient;
 Thing::CoAP::ESP::UDPPacketProvider udpProvider;
 bool respuestaRecibida = false;
+Thing::CoAP::ObserveToken token;
 
 //Funcion de seteado de wifi
 //se realiza una sola vez
@@ -99,13 +100,24 @@ void callback(char* topic, byte* payload, unsigned int length){
     (otto.*f) ();
   mqttClient.publish("mensaje","Recibido");
 }
-
+void observer(Thing::CoAP::Response response){
+      Serial.println("Respuesta de observacion resivida");
+      std::vector<uint8_t> payload = response.GetPayload();
+      std::string received(payload.begin(), payload.end());
+      Serial.println("Server envio el siguiente mensaje:");
+      Serial.println(received.c_str());
+      if(received.length()<=2){
+        intValue = stoi(received);
+      }
+      f = otto.Otto::doActionsArray[intValue];
+      (otto.*f)();
+  }
 void sendMessage(){
   //Make a post
   coapClient.Get("movimiento", "", [](Thing::CoAP::Response response){
       std::vector<uint8_t> payload = response.GetPayload();
       std::string received(payload.begin(), payload.end());
-      Serial.println("Server sent the following message:");
+      Serial.println("Server envio el siguiente mensaje:");
       Serial.println(received.c_str());
       if(received.length()<=2){
         intValue = stoi(received);
@@ -133,16 +145,21 @@ void setup() {
     coapClient.SetPacketProvider(udpProvider);
     IPAddress ip(192, 168, 0, 245);
     coapClient.Start(ip, 5683);
+    Serial.println("Configurando observación del recurso 'movimiento'");
+    token = coapClient.Observe("movimiento", observer);
 }
 
 void loop() {
-  sendMessage();
+
+  //Se utilizo para probar si cominicaba con el servidor CoAP
+  //sendMessage();
+
   coapClient.Process();
   
-    if(!mqttClient.connected()){
+  if(!mqttClient.connected()){
       reconnect();
     }
-    mqttClient.loop(); 
+  mqttClient.loop();
   //Si se selecciono un movimiento que utiliza el ultrasonido 
   // se queda repitiendo ese movimiento haste que se seleccione otro
   if(intValue >= 20){

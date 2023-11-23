@@ -8,11 +8,11 @@ import logging
 # Configura el nivel de logs
 logging.basicConfig(level=logging.DEBUG)
 
-class OttoRobotResource(resource.Resource):
+class OttoRobotResource(resource.ObservableResource):
     def __init__(self):
         super().__init__()
         self.mymovimiento = f""
-
+        self.observe_count = 0
     async def render_post(self, request):
         try:
             payload = request.payload.decode('utf-8')
@@ -21,8 +21,9 @@ class OttoRobotResource(resource.Resource):
 
             # Lógica para interpretar comandos y controlar el NodeMCU
             self.mymovimiento = payload
+            self.updated_state()
+            return aiocoap.Message(code=aiocoap.CHANGED, payload=str(self.mymovimiento).encode('utf-8'))
 
-            return aiocoap.Message(payload=b"Recibido")
         except Exception as e:
             print(f"Error en render_post: {e}")
             return aiocoap.Message(code=aiocoap.CHANGED, payload=b"Error interno")
@@ -30,15 +31,16 @@ class OttoRobotResource(resource.Resource):
     async def render_get(self, request):
         try:
             payload = bytes(self.mymovimiento, 'utf-8')
-            self.mymovimiento=f""
             print(f"Payload:{payload}")
             logging.info("Solicitud GET recibida")
             return aiocoap.Message(payload=payload)
         except Exception as e:
             print(f"Error en render_get():{e}")
             return aiocoap.Message(code=aiocoap.CHANGED, payload=b"Error interno")
-   
-    
+    def observer(self, response):
+        # ... Otras declaraciones ...
+        logging.info("Observación recibida en el recurso 'movimiento'")
+        # ... Otras declaraciones ...
 def get_local_ip():
     s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
     try:
@@ -61,7 +63,7 @@ def main():
     local_ip = get_local_ip()
     print(f"{local_ip}")
     # Configurar y levantar el servidor
-    asyncio.Task(Context.create_server_context(root, bind=(local_ip, 5683)))
+    asyncio.Task(Context.create_server_context(root, bind=(local_ip, 5683)))# Local ip debe replazarse con la ip en la que quieras levantar el server
     print(f"Servidor CoAP iniciado en: http://{local_ip}:5683")
     asyncio.get_event_loop().run_forever()
 

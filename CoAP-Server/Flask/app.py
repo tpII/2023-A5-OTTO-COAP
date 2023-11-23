@@ -39,7 +39,7 @@ def index():
     """# Dirección IP o nombre de host de tu servidor CoAP
     server_coap_address = '192.168.0.254'  # Reemplaza con la dirección IP de tu servidor CoAP
 
-    # Ejecutar el comando ping
+    # Ejecutar el comando ping para probar conectividad con servidor CoAP
     try:
         app.logger.info('Iniciando ejecucion de ping ...')
         result = result = subprocess.run(['C:\\Windows\\System32\\ping.exe', '-n', '4', server_coap_address], capture_output=True, text=True, check=True)
