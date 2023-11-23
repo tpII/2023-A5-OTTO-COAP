@@ -1,0 +1,56 @@
+<!-- index.html -->
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Control Remoto Robot</title>
+    <style>
+            body {
+                font-family: Arial, sans-serif;
+                text-align: center;
+            }
+            button {
+                margin: 10px;
+                padding: 10px;
+                font-size: 16px;
+            }
+    </style>
+</head>
+<body>
+    <h1>Control Remoto Robot</h1>
+    <button onclick="enviarComando('1')">Adelante</button>
+    <button onclick="enviarComando('2')">Atrás</button>
+    <button onclick="enviarComando('3')">Izquierda</button>
+    <button onclick="enviarComando('4')">Derecha</button>
+
+    <script>
+        function enviarComando(comando) {
+            // Se utiliza JavaScript para enviar la solicitud POST al servidor Flask
+            fetch('/movimiento', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json', 
+                },
+                body: JSON.stringify({ 'datos': comando }),
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log(data);
+            })
+            .catch(error => console.error('Error:', error));
+        }
+        /*function sendCommand(command) {
+            // Enviar comando al servidor CoAP
+            fetch(`http://127.0.0.1:5000/otto`//`192.168.0.245:5683/otto`
+        , {
+                method: 'POST',
+                body: command
+            })
+            .then(response => response.text())
+            .then(data => console.log(data))
+            .catch(error => console.error('Error:', error));
+        }*/
+    </script>
+</body>
+</html>
