@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { MatMenuModule } from '@angular/material/menu';
 import { Router } from '@angular/router';
 import { CoapService } from '../helper/coap.service';
-import { MqttServiceClient } from '../helper/mqtt/mqtt.service';
+import { WebSocketService } from '../helper/WebSocket/webSocket.services';
 
 @Component({
   selector: 'app-windows1',
@@ -14,8 +14,8 @@ import { MqttServiceClient } from '../helper/mqtt/mqtt.service';
 export class Windows1Component {
   constructor(
     private router: Router,
-    private mqttServices: MqttServiceClient,
-    private coapService: CoapService
+    private coapService: CoapService,
+    private WebSocketService: WebSocketService
   ) {}
 
   options: string[] = [
@@ -44,16 +44,9 @@ export class Windows1Component {
     'avoidObstacles',
   ];
   selectedOption: string = '';
-  indice: number = -1;
-  protocoloSeleccionado: string = 'CoAP';
+  indice: number = 1;
+  protocoloSeleccionado: string = 'MQTT';
 
-  OnInit() {
-    if (this.protocoloSeleccionado === 'CoAP') {
-      this.coapService.sendCoapRequestAndCalculateTime(this.indice.toString());
-    } else {
-      this.mqttServices.publishToMovimientos(this.indice);
-    }
-  }
   //Permite saber en todo momento cual es el protocolo de mensajeria que se desea utilizar, permitiendo el cambio
 
   toggleProtocol() {
@@ -62,7 +55,10 @@ export class Windows1Component {
       this.coapService.sendCoapRequestAndCalculateTime(this.indice.toString());
     } else {
       this.protocoloSeleccionado = 'CoAP';
-      this.mqttServices.publishToMovimientos(this.indice);
+      this.WebSocketService.enviarMensaje(
+        'movimientos',
+        this.indice.toString()
+      );
     }
   }
 
@@ -73,5 +69,11 @@ export class Windows1Component {
   //Permite saber la instruccion elegida por el usuario, para luego enviarla al NodeMCU
   saveValue(valor: number) {
     this.indice = valor;
+    if (this.protocoloSeleccionado === 'MQTT') {
+      this.WebSocketService.enviarMensaje(
+        'movimientos',
+        this.indice.toString()
+      );
+    }
   }
 }

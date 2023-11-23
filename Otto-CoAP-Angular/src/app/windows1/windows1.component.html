@@ -31,7 +31,12 @@
 
 </div>
 <!--BOTONES DE MOVIMIENTO-->
-
+<div class="container">
+  <button class="btn_up" (click)="saveValue(1)">Adelante</button>
+  <button class="btn_left" (click)="saveValue(4)">Izquierda</button>
+  <button class="btn_center"(click)="saveValue(2)">Atrás</button>
+  <button class="btn_right"(click)="saveValue(3)">Derecha</button>
+</div>
 
 <!--Aviso de instruccion seleccionada-->
 <p>Instruccion Seleccionada: {{ options[indice] }}</p>

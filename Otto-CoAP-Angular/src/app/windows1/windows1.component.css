@@ -64,3 +64,74 @@
   left: 50%;
   transform: translate(-50%, -50%);
 }
+/*Logica para los botones de movimiento*/
+.container {
+  position: relative;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  max-width: 80%;
+}
+
+.btn {
+  padding: 15px 20px;
+  margin: 10px;
+  font-size: 16px;
+  cursor: pointer;
+  border: none;
+  border-radius: 5px;
+  background-color: #3498db;
+  color: white;
+}
+
+@media screen and (max-width: 768px) {
+  .btn {
+    font-size: 14px;
+    padding: 10px 15px;
+    margin: 5px;
+  }
+
+  .up {
+    margin-top: 40;
+    order: -3;
+  }
+
+  .left {
+    margin-top: 50;
+    margin-right: 50;
+    order: -2;
+  }
+
+  .center {
+    margin-top: 50;
+    order: -1;
+  }
+
+  .right {
+    margin-top: 50;
+    margin-left: 50;
+    order: -4;
+  }
+}
+.btn_up {
+  position: absolute ;
+  top: 0%;
+  left: 50%;
+  transform: translate(-50%, -50%)
+}
+.btn_left {
+  position: fixed;
+  top: 10%;
+  left: 30%;
+}
+.btn_right {
+  position: fixed;
+  top: 10%;
+  right: 50%;
+}
+.btn_center {
+  position: absolute ;
+  bottom: -90px;
+  left: 50%;
+  transform: translate(-50%, -50%)
+}
