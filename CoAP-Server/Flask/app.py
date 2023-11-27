@@ -58,7 +58,7 @@ def movimiento():
     try:
         datos = request.json['datos']
         # Envía los datos al servidor CoAP
-        servidor_coap_ip = "192.168.0.245"  # Cambia esto con la IP de tu servidor CoAP
+        servidor_coap_ip = "163.10.142.82"  # Cambia esto con la IP de tu servidor CoAP
         servidor_coap_port = 5683  # Cambia esto con el puerto de tu servidor CoAP
 
         respuesta_coap = asyncio.run(enviar_datos_a_coap(servidor_coap_ip, servidor_coap_port, datos))

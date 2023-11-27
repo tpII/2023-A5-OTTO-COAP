@@ -2,7 +2,7 @@ const mqtt = require('mqtt');
 const WebSocket = require('websocket').server;
 const http = require('http');
 
-const mqttBroker = mqtt.connect('mqtt://192.168.0.139:1883'); // Reemplazar con la IP del broker
+const mqttBroker = mqtt.connect('mqtt://127.0.0.1:1883'); 
 
 const server = http.createServer((request, response) => {
 });
@@ -29,6 +29,5 @@ wsServer.on('request', (request) => {
 
 server.listen(3000, () => {
   console.log('Servidor WebSocket corriendo en el puerto 3000');
-  // Otros códigos o lógica adicional que puedas tener después de que el servidor comience a escuchar.
 });
 
