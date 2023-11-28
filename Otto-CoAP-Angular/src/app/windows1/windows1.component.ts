@@ -1,8 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { MatMenuModule } from '@angular/material/menu';
 import { Router } from '@angular/router';
-import { CoapService } from '../helper/coap.service';
-import { WebSocketService } from '../helper/WebSocket/webSocket.services';
+import { WebSocketService } from '../helper/webSocket.services';
 
 @Component({
   selector: 'app-windows1',
@@ -14,7 +13,6 @@ import { WebSocketService } from '../helper/WebSocket/webSocket.services';
 export class Windows1Component {
   constructor(
     private router: Router,
-    private coapService: CoapService,
     private WebSocketService: WebSocketService
   ) {}
 
@@ -45,20 +43,17 @@ export class Windows1Component {
   ];
   selectedOption: string = '';
   indice: number = 1;
-  protocoloSeleccionado: string = 'MQTT';
+  protocoloSeleccionado: string = 'CoAP';
 
   //Permite saber en todo momento cual es el protocolo de mensajeria que se desea utilizar, permitiendo el cambio
 
   toggleProtocol() {
     if (this.protocoloSeleccionado === 'CoAP') {
       this.protocoloSeleccionado = 'MQTT';
-      this.coapService.sendCoapRequestAndCalculateTime(this.indice.toString());
+      this.WebSocketService.enviarMensaje('protocolo', 'MQTT');
     } else {
       this.protocoloSeleccionado = 'CoAP';
-      this.WebSocketService.enviarMensaje(
-        'movimientos',
-        this.indice.toString()
-      );
+      this.WebSocketService.enviarMensaje('protocolo', 'CoAP');
     }
   }
 
@@ -69,11 +64,6 @@ export class Windows1Component {
   //Permite saber la instruccion elegida por el usuario, para luego enviarla al NodeMCU
   saveValue(valor: number) {
     this.indice = valor;
-    if (this.protocoloSeleccionado === 'MQTT') {
-      this.WebSocketService.enviarMensaje(
-        'movimientos',
-        this.indice.toString()
-      );
-    }
+    this.WebSocketService.enviarMensaje('movimientos', this.indice.toString());
   }
 }
