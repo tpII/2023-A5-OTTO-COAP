@@ -19,14 +19,14 @@ Otto otto;
 Otto::function f;
 int intValue = 0;
 
-const char *ssid = "Fibertel WiFi595 2.4GHz"; //"alumnosInfo";          // Parametros del AP
-const char *password = "0141161689";          //"Informatica2019";  //
-const char *mqtt_server = "127.0.0.1";        //"163.10.142.82"; // Parametros del broker MQTT
-const uint16_t mqtt_server_port = 1883;       //
-const char *mqttUser = "Otto";                //
-const char *mqttPassword = "DefaultOtto";     //
-const char *mqttTopicIn = "movimientos";      //
-const char *mqttTopicOut = "otto-out";        //
+const char *ssid = "EAD-wifi";             //"alumnosInfo";          // Parametros del AP
+const char *password = "ead18ead";         //"Informatica2019";  //
+const char *mqtt_server = "192.168.0.105"; //"163.10.142.82"; // Parametros del broker MQTT
+const uint16_t mqtt_server_port = 1883;    //
+const char *mqttUser = "Otto";             //
+const char *mqttPassword = "DefaultOtto";  //
+const char *mqttTopicIn = "movimientos";   //
+const char *mqttTopicOut = "otto-out";     //
 
 WiFiClient wifiClient;
 PubSubClient mqttClient(wifiClient);
@@ -126,7 +126,7 @@ void observer(Thing::CoAP::Response response)
 void sendMessage()
 {
   // Make a post
-  coapClient.Get("movimiento", "", [](Thing::CoAP::Response response)
+  coapClient.Get("movimientos", "", [](Thing::CoAP::Response response)
                  {
       std::vector<uint8_t> payload = response.GetPayload();
       std::string received(payload.begin(), payload.end());
@@ -155,10 +155,10 @@ void setup()
   mqttClient.setCallback(callback);
   // Configuracion del cliente CoAP y coneccion al servidor
   coapClient.SetPacketProvider(udpProvider);
-  IPAddress ip(163, 10, 142, 82);
+  IPAddress ip(192, 168, 0, 105); // CONFIGURAR IP COAP
   coapClient.Start(ip, 5683);
-  Serial.println("Configurando observación del recurso 'movimiento'");
-  token = coapClient.Observe("movimiento", observer);
+  Serial.println("Configurando observación del recurso 'movimientos'");
+  token = coapClient.Observe("movimientos", observer);
 }
 
 void loop()
@@ -174,8 +174,8 @@ void loop()
     reconnect();
   }
   mqttClient.loop();
-  // Si se selecciono un movimiento que utiliza el ultrasonido
-  //  se queda repitiendo ese movimiento haste que se seleccione otro
+  //  Si se selecciono un movimiento que utiliza el ultrasonido
+  //   se queda repitiendo ese movimiento haste que se seleccione otro
   if (intValue >= 20)
   {
     (otto.*f)();

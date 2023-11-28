@@ -3,7 +3,7 @@ const WebSocket = require('websocket').server;
 const http = require('http');
 const coap = require('node-coap-client').CoapClient;
 
-const mqttBroker = mqtt.connect('mqtt://192.168.0.160:1883'); // Reemplazar con la IP del broker
+const mqttBroker = mqtt.connect('mqtt://192.168.0.105:1883'); // Reemplazar con la IP del broker
 
 const server = http.createServer((request, response) => {
 });
@@ -30,8 +30,9 @@ wsServer.on('request', (request) => {
             console.log("MQTT activado");}
           }
         else{ //es para el topico movimientos
-          if(isCoap)
-            sendCoAPMessage(data.topic, data.message);
+          if(isCoap){
+          console.log(isCoap)
+            sendCoAPMessage(data.topic, data.message);}
           else{
             console.log("Se publicará en el tópico:", data.topic + " con el mensaje:", data.message);
             mqttBroker.publish(data.topic, data.message);
@@ -44,12 +45,13 @@ wsServer.on('request', (request) => {
 
   async function sendCoAPMessage(topic, message) {
     try {
-      const host= '192.168.0.160';
+      const host= '192.168.0.105';
       const port= 5683;
-      const url = `coap://${host}:${port}/${topic}`;
+      const url = `coap://${host}:${port}/movimientos`//${topic}`;
+      console.log(`${url}`+"el mensaje sera: ",Buffer.from(message));
       const response = await coap.request(url,'post',Buffer.from(message)); //Se envia al server
       console.log('Respuesta de CoAP:', response.code);
-      console.log("Se envió el movimiento: " + message + " por CoAP ");
+      console.log("Se envió el movimiento al server CoAP: ", message);
     } catch (error) {
       console.error('Error al enviar el mensaje CoAP:', error);
     }

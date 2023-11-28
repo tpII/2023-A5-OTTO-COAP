@@ -53,19 +53,21 @@ def get_local_ip():
         s.close()
             
             
-def main():
+async def main():
 
     # Configurar el recurso CoAP y pasar la instancia de NodeMCU
     root = resource.Site()
     root.add_resource(('.well-known', 'core'), resource.WKCResource(root.get_resources_as_linkheader))
-    root.add_resource(('movimiento',), OttoRobotResource())
+    root.add_resource(('movimientos',), OttoRobotResource())
     # Obtener la dirección IP local
     local_ip = get_local_ip()
     print(f"{local_ip}")
     # Configurar y levantar el servidor
-    asyncio.Task(Context.create_server_context(root, bind=(local_ip, 5683)))# Local ip debe replazarse con la ip en la que quieras levantar el server
+    loop= asyncio.get_event_loop()
+    asyncio.ensure_future (Context.create_server_context(root, bind=(local_ip, 5683)))
+# Local ip debe replazarse con la ip en la que quieras levantar el server
     print(f"Servidor CoAP iniciado en: http://{local_ip}:5683")
-    asyncio.get_event_loop().run_forever()
+    await asyncio.sleep(3600)
 
 if __name__ == "__main__":
-    main()
+      asyncio.run(main())
