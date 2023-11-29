@@ -73,65 +73,91 @@
   max-width: 80%;
 }
 
-.btn {
-  padding: 15px 20px;
-  margin: 10px;
-  font-size: 16px;
-  cursor: pointer;
-  border: none;
-  border-radius: 5px;
+.btn_up {
+  position: fixed ;
+  /*top: 50%;*/
+  bottom: 45%;
+  left: 54%;
+  transform: translate(-50%, -50%);
+  background-color: #3498db;
+  color: white;
+
+}
+.btn_left {
+  position: fixed;
+  top: 60%;
+  left: 41%;
+  background-color: #3498db;
+  color: white;
+}
+.btn_right {
+  position: fixed;
+  top: 60%;
+  right: 35%;
+  background-color: #3498db;
+  color: white;
+}
+.btn_center {
+  padding: 4px 4px;
+  position: absolute ;
+  bottom: -442px;
+  left: 67%;
+  transform: translate(-50%, -50%);
   background-color: #3498db;
   color: white;
 }
 
-@media screen and (max-width: 768px) {
-  .btn {
-    font-size: 14px;
-    padding: 10px 15px;
-    margin: 5px;
+
+@media screen and (max-width: 768px) {/*DEFINICION DE ESTILOS PARA DISPOSITIVOS MOVILES*/
+  .btn_up {
+    position: fixed ;
+    /*top: 50%;*/
+    bottom: 47%;
+    left: 58%;
+    transform: translate(-50%, -50%);
+    background-color: #3498db;
+    color: white;
+
+  }
+  .btn_left {
+    position: fixed;
+    top: 55%;
+    left: 31%;
+    background-color: #3498db;
+    color: white;
+  }
+  .btn_right {
+    position: fixed;
+    top: 55%;
+    right: 20%;
+    background-color: #3498db;
+    color: white;
+  }
+  .btn_center {
+    padding: 3px 3px;
+    position: fixed ;
+    bottom: 33%;
+    left: 55%;
+    transform: translate(-50%, -50%);
+    background-color: #3498db;
+    color: white;
   }
 
-  .up {
-    margin-top: 40;
-    order: -3;
+  .column-button1{
+    margin-bottom: 5% 5%; /* Espacio entre los botones  */
+    padding: 2% 2%; /* Relleno del botón  */
+    justify-content: center;
+    align-items: center;
+
+
   }
 
-  .left {
-    margin-top: 50;
-    margin-right: 50;
-    order: -2;
-  }
+  .column-button2 {
+    margin-bottom: 5% 5%; /* Espacio entre los botones  */
+    padding: 2% 2%; /* Relleno del botón  */
+    display: flex;
+    justify-content: center;
+    align-items: center;
 
-  .center {
-    margin-top: 50;
-    order: -1;
   }
-
-  .right {
-    margin-top: 50;
-    margin-left: 50;
-    order: -4;
-  }
-}
-.btn_up {
-  position: absolute ;
-  top: 0%;
-  left: 50%;
-  transform: translate(-50%, -50%)
-}
-.btn_left {
-  position: fixed;
-  top: 10%;
-  left: 30%;
-}
-.btn_right {
-  position: fixed;
-  top: 10%;
-  right: 50%;
-}
-.btn_center {
-  position: absolute ;
-  bottom: -90px;
-  left: 50%;
-  transform: translate(-50%, -50%)
 }
