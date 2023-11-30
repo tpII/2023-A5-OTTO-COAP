@@ -1,0 +1,39 @@
+version: '3'
+services:
+  coap_server:
+    build: ./CoAP-Server
+    networks:
+      my_network:
+        ipv4_address: 172.16.238.10
+    ports:
+      - "5683:5683/udp"
+    # Puedes agregar más configuraciones según lo necesites para tu servidor CoAP
+
+  websocket_server:
+    build: ./WebSocket-Proxy
+    networks:
+      my_network:
+        ipv4_address: 172.16.238.11
+    ports:
+      - "3000:3000"
+    # Puedes agregar más configuraciones según lo necesites para tu servidor WebSocket
+
+  mqtt_server:
+    image: eclipse-mosquitto:latest
+    networks:
+      my_network:
+        ipv4_address: 172.16.238.12
+    volumes:
+      - ./mosquitto/config:/mosquitto/config  
+      - ./mosquitto/data:/mosquitto/data      
+      - ./mosquitto/log:/mosquitto/log 
+    ports:
+      - "1883:1883"
+      - "9001:9001" 
+
+networks:
+  my_network:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.16.238.0/24

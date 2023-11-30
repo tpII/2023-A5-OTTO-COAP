@@ -3,7 +3,7 @@ const WebSocket = require('websocket').server;
 const http = require('http');
 const coap = require('node-coap-client').CoapClient;
 
-const mqttBroker = mqtt.connect('mqtt://192.168.0.105:1883'); // Reemplazar con la IP del broker
+const mqttBroker = mqtt.connect('mqtt://mqtt_server:1883'); // Reemplazar con la IP del broker
 
 const server = http.createServer((request, response) => {
 });
@@ -45,10 +45,10 @@ wsServer.on('request', (request) => {
 
   async function sendCoAPMessage(topic, message) {
     try {
-      const host= '192.168.0.105';
+      const host= '172.16.238.10';
       const port= 5683;
       const url = `coap://${host}:${port}/movimientos`//${topic}`;
-      console.log(`${url}`+"el mensaje sera: ",Buffer.from(message));
+      console.log(`${url}`+" servicio de conexion al coap con la info : ",Buffer.from(message));
       const response = await coap.request(url,'post',Buffer.from(message)); //Se envia al server
       console.log('Respuesta de CoAP:', response.code);
       console.log("Se envió el movimiento al server CoAP: ", message);
@@ -56,18 +56,6 @@ wsServer.on('request', (request) => {
       console.error('Error al enviar el mensaje CoAP:', error);
     }
   }
-// Función para enviar mensajes por CoAP
-/*function sendCoAPMessage(topic, message) {
-  const coapClient = coap.request('coap://192.168.0.160:5683'); // Reemplazar con la IP y ruta CoAP
-  coapClient.on('response', (res) => {
-    console.log('Respuesta de CoAP:', res.code);
-    coapClient.end();
-  });
-  console.log("Se envia el movimiento: "+ message +" por CoAP ");
-  coapClient.write(message);
-  coapClient.end();
-}*/
-
 //Servidor escuchando en puerto
 server.listen(3000, () => {
   console.log('Servidor WebSocket corriendo en el puerto 3000');
