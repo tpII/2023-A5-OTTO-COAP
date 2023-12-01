@@ -4,7 +4,7 @@
 #include <WiFiUdp.h>
 #include <PubSubClient.h>
 #include "Thing.CoAP.h"
-#include <iostream>
+
 
 // Configuracion
 
@@ -19,9 +19,9 @@ Otto otto;
 Otto::function f;
 int intValue = 0;
 
-const char *ssid = "EAD-wifi";             //"alumnosInfo";          // Parametros del AP
-const char *password = "ead18ead";         //"Informatica2019";  //
-const char *mqtt_server = "192.168.0.105"; //"163.10.142.82"; // Parametros del broker MQTT
+const char *ssid = "Fibertel WiFi595 2.4GHz";             //"alumnosInfo";          // Parametros del AP
+const char *password = "0141161689";         //"Informatica2019";  //
+const char *mqtt_server = "192.168.0.245"; //"163.10.142.82"; // Parametros del broker MQTT
 const uint16_t mqtt_server_port = 1883;    //
 const char *mqttUser = "Otto";             //
 const char *mqttPassword = "DefaultOtto";  //
@@ -107,8 +107,10 @@ void callback(char *topic, byte *payload, unsigned int length)
   f = otto.Otto::doActionsArray[intValue];
   // Invoco el movimiento
   (otto.*f)();
-  mqttClient.publish("mensaje", "Recibido");
 }
+
+//Funcion response para analizar la peticiones resividas de
+//observar le recurso CoAP
 void observer(Thing::CoAP::Response response)
 {
   Serial.println("Respuesta de observacion resivida");
@@ -143,11 +145,12 @@ void setup()
 {
 
   Serial.begin(9600);
-
+  //Inicializa el robot otto
   otto.init(PIERNA_I, PIERNA_D, PIE_D, PIE_I, TRIGER, ECHO);
   otto.home();
 
   delay(500);
+  //Realiza la coneccion a la red wifi
   setup_Wifi();
 
   // Se realiza la configuracion del cliente mqtt para permitir la comunicacion con el broker
@@ -155,18 +158,15 @@ void setup()
   mqttClient.setCallback(callback);
   // Configuracion del cliente CoAP y coneccion al servidor
   coapClient.SetPacketProvider(udpProvider);
-  IPAddress ip(192, 168, 0, 105); // CONFIGURAR IP COAP
+  IPAddress ip(192,168,0,245); // CONFIGURAR IP COAP
   coapClient.Start(ip, 5683);
-  Serial.println("Configurando observación del recurso 'movimientos'");
+  // Configuramos el cliente para que se ponga observar el recurso
   token = coapClient.Observe("movimientos", observer);
 }
 
 void loop()
 {
-
-  // Se utilizo para probar si cominicaba con el servidor CoAP
-  // sendMessage();
-
+  //Procesa la peticiones Coap
   coapClient.Process();
 
   if (!mqttClient.connected())
@@ -174,6 +174,7 @@ void loop()
     reconnect();
   }
   mqttClient.loop();
+
   //  Si se selecciono un movimiento que utiliza el ultrasonido
   //   se queda repitiendo ese movimiento haste que se seleccione otro
   if (intValue >= 20)
