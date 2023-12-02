@@ -15,6 +15,9 @@
 #define TRIGER D1
 #define ECHO D2
 
+unsigned long coapRequestTime = 0;
+unsigned long coapResponseTime = 0;
+
 Otto otto;
 Otto::function f;
 int intValue = 0;
@@ -102,17 +105,18 @@ void callback(char *topic, byte *payload, unsigned int length)
     intValue = atoi((char *)payload);
     Serial.print("Ejecutando movimiento con el valor ");
     Serial.print(intValue);
+    // Obtengo la funcion del movimiento llamada por el mensaje
+    f = otto.Otto::doActionsArray[intValue];
+    // Invoco el movimiento
+    (otto.*f)();
   }
-  // Obtengo la funcion del movimiento llamada por el mensaje
-  f = otto.Otto::doActionsArray[intValue];
-  // Invoco el movimiento
-  (otto.*f)();
 }
 
 //Funcion response para analizar la peticiones resividas de
 //observar le recurso CoAP
 void observer(Thing::CoAP::Response response)
 {
+  coapResponseTime = millis();
   Serial.println("Respuesta de observacion resivida");
   std::vector<uint8_t> payload = response.GetPayload();
   std::string received(payload.begin(), payload.end());
@@ -121,9 +125,14 @@ void observer(Thing::CoAP::Response response)
   if (received.length() <= 2)
   {
     intValue = stoi(received);
+    f = otto.Otto::doActionsArray[intValue];
+    (otto.*f)();
   }
-  f = otto.Otto::doActionsArray[intValue];
-  (otto.*f)();
+  // Calcula el Round Trip Time (RTT)
+  unsigned long rtt = coapResponseTime - coapRequestTime;
+  Serial.print("Round Trip Time (RTT): ");
+  Serial.println(rtt);
+  coapRequestTime = millis();
 }
 void sendMessage()
 {
@@ -136,11 +145,12 @@ void sendMessage()
       Serial.println(received.c_str());
       if(received.length()<=2){
         intValue = stoi(received);
-      }
-      f = otto.Otto::doActionsArray[intValue];
-      (otto.*f)(); });
+        f = otto.Otto::doActionsArray[intValue];
+        (otto.*f)();
+      }});
 }
-
+bool activarO; 
+int cant=0;
 void setup()
 {
 
@@ -161,11 +171,25 @@ void setup()
   IPAddress ip(192,168,0,245); // CONFIGURAR IP COAP
   coapClient.Start(ip, 5683);
   // Configuramos el cliente para que se ponga observar el recurso
+  coapRequestTime = millis();
   token = coapClient.Observe("movimientos", observer);
+  
 }
 
 void loop()
 {
+  if (cant==10){
+    coapClient.CancelObserve(token);
+    activarO=true;
+  } else{ 
+    if (activarO){
+    // Reinicia la observacion del recurso
+    coapRequestTime = millis();
+    token = coapClient.Observe("movimientos", observer);
+    }
+  }
+
+
   //Procesa la peticiones Coap
   coapClient.Process();
 
