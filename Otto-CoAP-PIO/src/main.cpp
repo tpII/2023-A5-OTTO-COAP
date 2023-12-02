@@ -181,7 +181,9 @@ void loop()
   if (cant==10){
     coapClient.CancelObserve(token);
     activarO=true;
+    cant=0;
   } else{ 
+    cant+=1;
     if (activarO){
     // Reinicia la observacion del recurso
     coapRequestTime = millis();
