@@ -19,7 +19,7 @@ TEST(callback_observer_test, Response_de_un_Movimiento){
     respuesta.SetPayload(payloadValido);
 
     // Llamar a la función observer con respuesta simulada
-    c_observer(respuesta);
+    observer(respuesta);
 
     // Verificamos el valor intValue se el valor de un indice de un movimiento
     // y que f no sea null
@@ -34,7 +34,7 @@ TEST(callback_observer_test, Response_de_Movimiento_que_no_extiste)
     respuesta.SetPayload(payloadNoValido);
 
     // Llamar a la función observer con respuesta simulada
-    c_observer(respuesta);
+    observer(respuesta);
 
     // Verificamos el comportamiento 
     ASSERT_EQ(f,nullptr);
@@ -44,7 +44,7 @@ TEST(callback_observer_test, ResponsePayloadNoValido){
     MockCoAPResponse respuesta;
     respuesta.SetPayload(payloadNoValido);
 
-    c_observer(respuesta);
+    observer(respuesta);
     
     // Verificamos el comportamiento 
     ASSERT_EQ(f,nullptr);
@@ -54,7 +54,7 @@ TEST(callback_observer_test, ResponsePayloadEmpty){
     MockCoAPResponse respuesta;
     respuesta.SetPayload(payloadVacio);
 
-    c_observer(respuesta);
+    observer(respuesta);
 
     ASSERT_EQ(0,intValue);
     ASSERT_EQ(f,nullptr);
@@ -63,7 +63,7 @@ TEST(callback_test, mensaje_mqtt_movimiento_valido){
     char topic[] = "movimientos";
     byte payload[]= {1,2};
     unsigned int length = sizeof(payload) / sizeof(payload[0]);  // Calcular el tamaño del array
-    c_respuesta(topic,payload,length);
+    callback(topic,payload,length);
 
     ASSERT_LE(intValue,23);
     ASSERT_NE(f,nullptr);
@@ -72,7 +72,7 @@ TEST(callback_test, mensaje_mqtt_movimiento_no_valido){
     char topic[] = "movimientos";
     byte payload[]= {4,6};
     unsigned int length = sizeof(payload) / sizeof(payload[0]);  // Calcular el tamaño del array
-    c_respuesta(topic,payload,length);
+    callback(topic,payload,length);
 
     ASSERT_EQ(f,nullptr);
 }
@@ -80,7 +80,7 @@ TEST(callback_test, mensaje_mqtt_payload_no_valido){
     char topic[] = "movimientos";
     byte payload[]= {1,2,3};
     unsigned int length = sizeof(payload) / sizeof(payload[0]);  // Calcular el tamaño del array
-    c_respuesta(topic,payload,length);
+    callback(topic,payload,length);
 
     ASSERT_EQ(f,nullptr);
 }
@@ -89,7 +89,7 @@ TEST(callback_test, mensaje_mqtt_payload_empty){
     char topic[] = "movimientos";
     byte payload[]= {};
     unsigned int length = sizeof(payload) / sizeof(payload[0]);  // Calcular el tamaño del array
-    c_respuesta(topic,payload,length);
+    callback(topic,payload,length);
     ASSERT_EQ(0,intValue);
     ASSERT_EQ(f,nullptr);
 }
