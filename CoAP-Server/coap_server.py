@@ -59,7 +59,7 @@ async def main():
     root.add_resource(('movimientos',), OttoRobotResource())
     
                                 # Obtener la dirección IP local
-    local_ip = "172.16.238.10"  # get_local_ip()
+    local_ip = "163.10.140.180"  # get_local_ip()
     print(f"{local_ip}")
     # Configurar y levantar el servidor
     loop= asyncio.get_event_loop()

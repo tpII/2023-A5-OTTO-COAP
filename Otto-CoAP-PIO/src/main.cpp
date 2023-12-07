@@ -4,8 +4,7 @@
 #include <WiFiUdp.h>
 #include <PubSubClient.h>
 #include "Thing.CoAP.h"
-
-
+#include "main.h"
 // Configuracion
 
 #define PIERNA_D D4
@@ -15,19 +14,18 @@
 #define TRIGER D1
 #define ECHO D2
 
-
 Otto otto;
 Otto::function f;
 int intValue = 0;
-bool activarO=true;
-const char *ssid = "Fibertel WiFi595 2.4GHz";             //"AC-Otto" Parametros para Acces point   "alumnosInfo";          // Parametros del AP
-const char *password = "0141161689";         // "12345678"     "Informatica2019";  //
-const char *mqtt_server = "192.168.0.113"; //"163.10.142.82"; // Parametros del broker MQTT
-const uint16_t mqtt_server_port = 1883;    //
-const char *mqttUser = "Otto";             //
-const char *mqttPassword = "DefaultOtto";  //
-const char *mqttTopicIn = "movimientos";   //
-const char *mqttTopicOut = "otto-out";     //
+bool activarO = true;
+const char *ssid = "alumnosInfo";           //"AC-Otto" Parametros para Acces point   "alumnosInfo";          // Parametros del AP
+const char *password = "Informatica2019";   // "12345678"     "Informatica2019";  //
+const char *mqtt_server = "163.10.140.180"; // Parametros del broker MQTT
+const uint16_t mqtt_server_port = 1883;     //
+const char *mqttUser = "Otto";              //
+const char *mqttPassword = "DefaultOtto";   //
+const char *mqttTopicIn = "movimientos";    //
+const char *mqttTopicOut = "otto-out";      //
 
 WiFiClient wifiClient;
 PubSubClient mqttClient(wifiClient);
@@ -115,8 +113,8 @@ void callback(char *topic, byte *payload, unsigned int length)
   }
 }
 
-//Funcion response para analizar la peticiones resividas de
-//observar le recurso CoAP
+// Funcion response para analizar la peticiones resividas de
+// observar le recurso CoAP
 void observer(Thing::CoAP::Response response)
 {
   Serial.println("Respuesta de observacion resivida");
@@ -130,7 +128,6 @@ void observer(Thing::CoAP::Response response)
     f = otto.Otto::doActionsArray[intValue];
     (otto.*f)();
   }
-  
 }
 void sendMessage()
 {
@@ -145,18 +142,18 @@ void sendMessage()
         intValue = stoi(received);
         f = otto.Otto::doActionsArray[intValue];
         (otto.*f)();
-      }});
-} 
+      } });
+}
 void setup()
 {
 
   Serial.begin(9600);
-  //Inicializa el robot otto
+  // Inicializa el robot otto
   otto.init(PIERNA_I, PIERNA_D, PIE_D, PIE_I, TRIGER, ECHO);
   otto.home();
 
   delay(500);
-  //Realiza la coneccion a la red wifi
+  // Realiza la coneccion a la red wifi
   setup_Wifi();
 
   // Se realiza la configuracion del cliente mqtt para permitir la comunicacion con el broker
@@ -164,11 +161,10 @@ void setup()
   mqttClient.setCallback(callback);
   // Configuracion del cliente CoAP y coneccion al servidor
   coapClient.SetPacketProvider(udpProvider);
-  IPAddress ip(192,168,0,113); // CONFIGURAR IP COAP
+  IPAddress ip(163, 10, 140, 180); // CONFIGURAR IP COAP
   coapClient.Start(ip, 5683);
   // Configuramos el cliente para que se ponga observar el recurso
   token = coapClient.Observe("movimientos", observer);
-  
 }
 
 void loop()
@@ -177,16 +173,17 @@ void loop()
   {
     reconnect();
     coapClient.CancelObserve(token);
-    activarO=true;
+    activarO = true;
   }
-  if (activarO){
+  if (activarO)
+  {
     // Reinicia la observacion del recurso
     token = coapClient.Observe("movimientos", observer);
-    activarO= false;
+    activarO = false;
   }
-    //Procesa la peticiones Coap
+  // Procesa la peticiones Coap
   coapClient.Process();
-  //Procesa la peticiones mqtt
+  // Procesa la peticiones mqtt
   mqttClient.loop();
 
   //  Si se selecciono un movimiento que utiliza el ultrasonido

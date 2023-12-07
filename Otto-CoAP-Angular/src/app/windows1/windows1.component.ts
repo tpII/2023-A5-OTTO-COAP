@@ -59,7 +59,7 @@ export class Windows1Component {
 
   //Redireccion hacia la segunda ventana
   goToWindows2() {
-    this.router.navigate(['/windows2']);
+    this.router.navigate(['/windows2'], { state: { contenidoArchivo: '...' } });
   }
   //Permite saber la instruccion elegida por el usuario, para luego enviarla al NodeMCU
   saveValue(valor: number) {

@@ -1,0 +1,61 @@
+
+RTT mqtt
+mqtt round trip time 5002.262115478516 millisegundo
+mqtt round trip time:  4999.050855636597 millisegundo
+mqtt round trip time:  5003.647327423096 millisegundo
+mqtt round trip time:  4997.164726257324 millisegundo
+mqtt round trip time:  5005.784749984741 millisegundo
+mqtt round trip time:  4994.995355606079 millisegundo
+mqtt round trip time:  5005.53822517395 millisegundo
+mqtt round trip time:  4997.72047996521 millisegundo
+mqtt round trip time:  5000.716686248779 millisegundo
+mqtt round trip time:  5000.214099884033 millisegundo
+promedio 10 rtt: 5000.709461 ms= 5.000709 s
+
+RTT CoAP
+Round Trip Time Total(RTT): 5026
+Round Trip Time Total(RTT): 5025
+Round Trip Time Total(RTT): 20021
+Round Trip Time Total(RTT): 5012
+Round Trip Time Total(RTT): 5010
+Round Trip Time Total(RTT): 5028
+Round Trip Time Total(RTT): 5012
+Round Trip Time Total(RTT): 10028
+Round Trip Time Total(RTT): 5034
+Round Trip Time Total(RTT): 5024
+promedio 10 rtt: 70220 ms= 7.022 s
+
+mqtt con acces point y docker
+mqtt round trip time:  17231.77146911621 ms
+mqtt round trip time:  1099.7295379638672 ms
+mqtt round trip time:  1354.8357486724854 ms
+mqtt round trip time:  1205.726146697998 ms
+mqtt round trip time:  2141.8116092681885 ms
+mqtt round trip time:  3202.0256519317627 ms
+mqtt round trip time:  3300.1348972320557 ms
+mqtt round trip time:  2813.4944438934326 ms
+mqtt round trip time:  3085.930585861206 ms
+mqtt round trip time:  16679.250240325928 ms
+ promedio 10 mqtt: 5211.4710325 = 5.2114710325 s
+
+CoAP con acces point y docker
+Round Trip Time (RTT): 140055
+Round Trip Time (RTT): 10001
+Round Trip Time (RTT): 5001
+Round Trip Time (RTT): 5001
+Round Trip Time (RTT): 5001
+Round Trip Time (RTT): 5000
+Round Trip Time (RTT): 5000
+Round Trip Time (RTT): 5001
+Round Trip Time (RTT): 5001
+Round Trip Time (RTT): 5000
+Round Trip Time (RTT): 5001
+Round Trip Time (RTT): 5000
+Round Trip Time (RTT): 5000
+Round Trip Time (RTT): 5001
+Round Trip Time (RTT): 15001
+Round Trip Time (RTT): 5000
+Round Trip Time (RTT): 5001
+Round Trip Time (RTT): 5001
+Round Trip Time (RTT): 5001
+promedio 10 peticiones coap:6000.6 ms= 6.0006

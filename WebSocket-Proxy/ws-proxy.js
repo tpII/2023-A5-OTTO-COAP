@@ -3,7 +3,7 @@ const WebSocket = require('websocket').server;
 const http = require('http');
 const coap = require('node-coap-client').CoapClient;
 
-const mqttBroker = mqtt.connect('mqtt://mqtt_server:1883'); // Reemplazar con la IP del broker
+const mqttBroker = mqtt.connect('mqtt://163.10.140.180:1883'); // Reemplazar con la IP del broker
 
 const server = http.createServer((request, response) => {
 });
@@ -45,7 +45,7 @@ wsServer.on('request', (request) => {
 
   async function sendCoAPMessage(topic, message) {
     try {
-      const host= '172.16.238.10';
+      const host= '163.10.140.180';
       const port= 5683;
       const url = `coap://${host}:${port}/movimientos`//${topic}`;
       console.log(`${url}`+" servicio de conexion al coap con la info : ",Buffer.from(message));
