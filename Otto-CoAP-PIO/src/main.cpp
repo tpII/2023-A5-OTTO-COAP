@@ -20,9 +20,9 @@ Otto otto;
 Otto::function f;
 int intValue = 0;
 bool activarO=true;
-const char *ssid = "Fibertel WiFi595 2.4GHz";             //"alumnosInfo";          // Parametros del AP
-const char *password = "0141161689";         //"Informatica2019";  //
-const char *mqtt_server = "192.168.0.245"; //"163.10.142.82"; // Parametros del broker MQTT
+const char *ssid = "Fibertel WiFi595 2.4GHz";             //"AC-Otto" Parametros para Acces point   "alumnosInfo";          // Parametros del AP
+const char *password = "0141161689";         // "12345678"     "Informatica2019";  //
+const char *mqtt_server = "192.168.0.113"; //"163.10.142.82"; // Parametros del broker MQTT
 const uint16_t mqtt_server_port = 1883;    //
 const char *mqttUser = "Otto";             //
 const char *mqttPassword = "DefaultOtto";  //
@@ -36,25 +36,30 @@ WiFiUDP udp;
 
 Thing::CoAP::Client coapClient;
 Thing::CoAP::ESP::UDPPacketProvider udpProvider;
-bool respuestaRecibida = false;
+
 Thing::CoAP::ObserveToken token;
 
 // Funcion de seteado de wifi
 // se realiza una sola vez
 void setup_Wifi()
 {
-
   Serial.print("Conectare a la red ");
   Serial.println(ssid);
-
+  /*WiFi.mode(WIFI_AP);
+  while (!WiFi.softAP(ssid,password)){
+    Serial.println(".");
+    delay(100);
+  }*/
   WiFi.begin(ssid, password);
-
   while (WiFi.status() != WL_CONNECTED)
   {
     delay(500);
     Serial.println("Conectando ...");
   }
   Serial.println("Conectado a WiFi");
+  /*Serial.print("Iniciado AP ");
+  Serial.println(ssid);
+  Serial.println(WiFi.softAPIP());*/
 }
 
 // Funcion reconnect llamada
@@ -159,7 +164,7 @@ void setup()
   mqttClient.setCallback(callback);
   // Configuracion del cliente CoAP y coneccion al servidor
   coapClient.SetPacketProvider(udpProvider);
-  IPAddress ip(192,168,0,245); // CONFIGURAR IP COAP
+  IPAddress ip(192,168,0,113); // CONFIGURAR IP COAP
   coapClient.Start(ip, 5683);
   // Configuramos el cliente para que se ponga observar el recurso
   token = coapClient.Observe("movimientos", observer);
@@ -177,6 +182,7 @@ void loop()
   if (activarO){
     // Reinicia la observacion del recurso
     token = coapClient.Observe("movimientos", observer);
+    activarO= false;
   }
     //Procesa la peticiones Coap
   coapClient.Process();
